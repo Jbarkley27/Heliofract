@@ -208,7 +208,7 @@ Material:
     m_Floats:
     - _AddPrecomputedVelocity: 0
     - _AdditionalLightsFalloff: 1
-    - _AdditionalLightsThreshold: 0.632
+    - _AdditionalLightsThreshold: 0.588
     - _AdvancedTab: 1
     - _AlbedoMapIntensity: 0.264
     - _AlembicMotionVectors: 0
@@ -227,7 +227,7 @@ Material:
     - _BlendModePreserveSpecular: 1
     - _BlendSrc: 5
     - _BlendSrcAlpha: 1
-    - _Brightness: 1.27
+    - _Brightness: 1.1
     - _BumpScale: 1
     - _ClearCoatMask: 0
     - _ClearCoatSmoothness: 0
@@ -277,7 +277,7 @@ Material:
     - _Light: 2
     - _LightBands: 2
     - _LightBandsScale: 0.5
-    - _LightThreshold: 0.33
+    - _LightThreshold: 0.405
     - _LightTransmission: 0
     - _LightTransmissionDistortion: 0.25
     - _LightTransmissionIntensity: 1
@@ -349,7 +349,7 @@ Material:
     - _Color1: {r: 0, g: 1, b: 0, a: 1}
     - _DetailColor: {r: 1, g: 1, b: 1, a: 1}
     - _DissolveBorderColor: {r: 1, g: 1, b: 1, a: 1}
-    - _EmissionColor: {r: 0.20754716, g: 0.20754716, b: 0.20754716, a: 1}
+    - _EmissionColor: {r: 0.20754713, g: 0.20754713, b: 0.20754713, a: 1}
     - _GoochBrightColor: {r: 1, g: 1, b: 1, a: 1}
     - _GoochDarkColor: {r: 0.745283, g: 0.745283, b: 0.745283, a: 1}
     - _IridescenceColor: {r: 1, g: 1, b: 1, a: 0.5}

@@ -3,6 +3,8 @@ using UnityEngine;
 
 public class GameState : MonoBehaviour
 {
+    public event System.Action StateChanged;
+
     public List<string> UnlockedActivityIds = new List<string>();
     public List<ResourceType> DiscoveredResources = new List<ResourceType>();
 
@@ -39,6 +41,7 @@ public class GameState : MonoBehaviour
         }
 
         UnlockedActivityIds.Add(activityId);
+        StateChanged?.Invoke();
     }
 
     private void AddDiscoveredResource(ResourceType resource)
@@ -49,5 +52,6 @@ public class GameState : MonoBehaviour
         }
 
         DiscoveredResources.Add(resource);
+        StateChanged?.Invoke();
     }
 }

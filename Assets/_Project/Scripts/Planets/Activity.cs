@@ -1,9 +1,28 @@
 using UnityEngine;
+using UnityEngine.Serialization;
 
 
 public abstract class Activity : MonoBehaviour
 {
-    public ActivityState State;
+    public event System.Action<ActivityState> StateChanged;
+
+    [FormerlySerializedAs("State")]
+    [SerializeField] private ActivityState state;
+
+    public ActivityState State
+    {
+        get => state;
+        set
+        {
+            if (state == value)
+            {
+                return;
+            }
+
+            state = value;
+            StateChanged?.Invoke(state);
+        }
+    }
 
     public abstract ActivityType Type { get; }
 
@@ -29,7 +48,5 @@ public enum ActivityType
 {
     Planet
 }
-
-
 
 
