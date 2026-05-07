@@ -1149,8 +1149,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bd04525237ff5404ab374e71c2024289, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlanetActivity
-  State: 1
+  state: 1
   Definition: {fileID: 11400000, guid: 3ba2a909b44d941dda37486af738fd36, type: 2}
+  miningView: {fileID: 0}
 --- !u!114 &1009404487061451979
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1500,8 +1501,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: helios
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
-  m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 651b0180b86f6431bb9d0d8f37a73c7a, type: 2}
+  m_sharedMaterial: {fileID: -5115936316860787416, guid: 651b0180b86f6431bb9d0d8f37a73c7a, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -1525,17 +1526,17 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 1
-  m_fontSizeBase: 1
+  m_fontSize: 0.85
+  m_fontSizeBase: 0.85
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
   m_fontSizeMax: 72
-  m_fontStyle: 32
+  m_fontStyle: 16
   m_HorizontalAlignment: 2
   m_VerticalAlignment: 1024
   m_textAlignment: 65535
-  m_characterSpacing: 26.13
+  m_characterSpacing: 4
   m_characterHorizontalScale: 1
   m_wordSpacing: 0
   m_lineSpacing: 0
