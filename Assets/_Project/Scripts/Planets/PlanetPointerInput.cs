@@ -1,5 +1,7 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.EventSystems;
+
 
 public class PlanetPointerInput : MonoBehaviour
 {
@@ -46,6 +48,12 @@ public class PlanetPointerInput : MonoBehaviour
 
     private bool IsMouseOverThisPlanet()
     {
+        if (EventSystem.current != null && EventSystem.current.IsPointerOverGameObject())
+        {
+            return false;
+        }
+
+
         if (targetCamera == null || Mouse.current == null)
         {
             return false;
