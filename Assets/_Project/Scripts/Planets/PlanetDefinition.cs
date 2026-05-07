@@ -12,4 +12,7 @@ public class PlanetDefinition : ScriptableObject
 
     public List<ResourceType> AvailableResources;
     public bool InitiallyUnlocked;
+
+    public PlanetMiningConfig MiningConfig = new PlanetMiningConfig();
+
 }

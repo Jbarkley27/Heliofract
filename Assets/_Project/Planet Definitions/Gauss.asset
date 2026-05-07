@@ -18,3 +18,24 @@ MonoBehaviour:
   SurfaceIntegrity: 100
   AvailableResources: 0000000001000000
   InitiallyUnlocked: 0
+  MiningConfig:
+    MinDepthLevel: 1
+    MaxDepthLevel: 3
+    StartingSurfaceAccessLevel: 1
+    MaxSurfaceAccessLevel: 3
+    SurfaceAccessLevels:
+    - AccessLevel: 1
+      Radius: 10
+    - AccessLevel: 1
+      Radius: 20
+    - AccessLevel: 1
+      Radius: 30
+    - AccessLevel: 1
+      Radius: 40
+    - AccessLevel: 1
+      Radius: 50
+    HealthMultiplier: 1
+    RewardMultiplier: 1
+    LootChanceMultiplier: 1
+    EnemyChanceMultiplier: 1
+    ForcedContents: []

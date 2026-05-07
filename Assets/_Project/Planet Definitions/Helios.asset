@@ -18,3 +18,48 @@ MonoBehaviour:
   SurfaceIntegrity: 100
   AvailableResources: 00000000
   InitiallyUnlocked: 1
+  MiningConfig:
+    MinDepthLevel: 1
+    MaxDepthLevel: 3
+    StartingSurfaceAccessLevel: 1
+    MaxSurfaceAccessLevel: 3
+    SurfaceAccessLevels:
+    - AccessLevel: 1
+      Radius: 5
+    - AccessLevel: 2
+      Radius: 10
+    - AccessLevel: 3
+      Radius: 15
+    - AccessLevel: 3
+      Radius: 20
+    - AccessLevel: 3
+      Radius: 25
+    HealthMultiplier: 1
+    RewardMultiplier: 1
+    LootChanceMultiplier: 1
+    EnemyChanceMultiplier: 1
+    ForcedContents:
+    - Id: debug_forced_loot_01
+      SurfaceAccessLevel: 1
+      DepthLevel: 2
+      UseSpecificCoordinate: 1
+      Coordinate: {x: 0, y: 0}
+      Content:
+        Type: 1
+        ContentId: debug_ancient_cache
+        Rarity: 2
+        StartsKnown: 0
+        MaxHealth: 0
+      SpawnOnce: 1
+    - Id: debug_forced_enemy_01
+      SurfaceAccessLevel: 1
+      DepthLevel: 1
+      UseSpecificCoordinate: 1
+      Coordinate: {x: 1, y: 0}
+      Content:
+        Type: 2
+        ContentId: debug_buried_sentinel
+        Rarity: 1
+        StartsKnown: 1
+        MaxHealth: 20
+      SpawnOnce: 1

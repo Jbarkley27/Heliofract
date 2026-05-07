@@ -1,0 +1,45 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 091deeb0e329644f58f4c6e5f09f8dba, type: 3}
+  m_Name: DepthDatabase
+  m_EditorClassIdentifier: Assembly-CSharp::DepthDatabase
+  depths:
+  - Level: 1
+    DisplayName: Surface
+    Color: {r: 0.43137258, g: 0.9490196, b: 0.7789144, a: 1}
+  - Level: 2
+    DisplayName: Shallow Crust
+    Color: {r: 0.23718406, g: 0.7735849, b: 0.6555336, a: 1}
+  - Level: 3
+    DisplayName: Lower Crust
+    Color: {r: 0.18431373, g: 0.6392157, b: 0.78039217, a: 1}
+  - Level: 4
+    DisplayName: Upper Mantle
+    Color: {r: 0.20784314, g: 0.47058824, b: 0.83137256, a: 1}
+  - Level: 5
+    DisplayName: Mantle
+    Color: {r: 0.30588236, g: 0.35686275, b: 0.84705883, a: 1}
+  - Level: 6
+    DisplayName: Deep Mantle
+    Color: {r: 0.45490196, g: 0.28235295, b: 0.78431374, a: 1}
+  - Level: 7
+    DisplayName: Core Boundary
+    Color: {r: 0.60784316, g: 0.24705882, b: 0.68235296, a: 1}
+  - Level: 8
+    DisplayName: Outer Core
+    Color: {r: 0.7529412, g: 0.26666668, b: 0.47843137, a: 1}
+  - Level: 9
+    DisplayName: Inner Core
+    Color: {r: 0.7169812, g: 0.25229314, b: 0.23335709, a: 1}
+  - Level: 10
+    DisplayName: Fracture Core
+    Color: {r: 0.8018868, g: 0.6140309, b: 0.26099145, a: 1}
