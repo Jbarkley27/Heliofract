@@ -1,0 +1,18 @@
+fileFormatVersion: 2
+guid: ce4f9427ae3b7ef43bb9227a56176899
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences: []
+  executionOrder: 0
+  icon: {fileID: 8117220494676001570, guid: 0000000000000000d000000000000000, type: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 264828
+  packageName: Life Bar Generator - Minimalist theme
+  packageVersion: 1.2
+  assetPath: Assets/PixelNarval/Scripts/Transition/Components/CanvasGroupAlphaColorTC.cs
+  uploadId: 645380

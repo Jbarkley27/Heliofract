@@ -1,0 +1,18 @@
+fileFormatVersion: 2
+guid: cd2b77ff4ef911c4f875cc84d02f2e2a
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences: []
+  executionOrder: 0
+  icon: {fileID: -2246836292574321313, guid: 0000000000000000d000000000000000, type: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 264828
+  packageName: Life Bar Generator - Minimalist theme
+  packageVersion: 1.2
+  assetPath: Assets/PixelNarval/Scripts/Transition/Components/AnchorRadialTC.cs
+  uploadId: 645380

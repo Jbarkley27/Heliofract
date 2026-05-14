@@ -1,0 +1,18 @@
+fileFormatVersion: 2
+guid: 763383abcd7f9a14198d7f30ed8f00a2
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences: []
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 264828
+  packageName: Life Bar Generator - Minimalist theme
+  packageVersion: 1.2
+  assetPath: Assets/PixelNarval/Scripts/Transition/Data/TransitionEventValue.cs
+  uploadId: 645380

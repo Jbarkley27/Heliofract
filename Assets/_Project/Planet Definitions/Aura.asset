@@ -19,21 +19,20 @@ MonoBehaviour:
   AvailableResources: 0000000001000000
   InitiallyUnlocked: 0
   MiningConfig:
-    MinDepthLevel: 1
-    MaxDepthLevel: 3
-    StartingSurfaceAccessLevel: 1
-    MaxSurfaceAccessLevel: 3
-    SurfaceAccessLevels:
+    GridWidth: 10
+    GridHeight: 10
+    CircleRadiusInCells: 5
+    MinimumInsideSamplesForValidTile: 3
+    MinDepthLevel: 2
+    StartingAccessLevel: 1
+    MaxAccessLevel: 4
+    AccessLevels:
     - AccessLevel: 1
-      Radius: 10
-    - AccessLevel: 1
-      Radius: 15
-    - AccessLevel: 1
-      Radius: 20
-    - AccessLevel: 1
-      Radius: 25
-    - AccessLevel: 1
-      Radius: 30
+      MaxDepthLevel: 4
+    - AccessLevel: 2
+      MaxDepthLevel: 5
+    - AccessLevel: 3
+      MaxDepthLevel: 6
     HealthMultiplier: 1
     RewardMultiplier: 1
     LootChanceMultiplier: 1

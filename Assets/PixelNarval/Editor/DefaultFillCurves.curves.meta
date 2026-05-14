@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: b3069fa1cc221504099abc9c68235350
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 264828
+  packageName: Life Bar Generator - Minimalist theme
+  packageVersion: 1.2
+  assetPath: Assets/PixelNarval/Editor/DefaultFillCurves.curves
+  uploadId: 645380

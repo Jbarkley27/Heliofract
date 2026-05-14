@@ -12,14 +12,14 @@ public static class MiningStateFactory
         }
 
         PlanetMiningConfig config = planetDefinition.MiningConfig;
-        int surfaceAccessLevel = config.StartingSurfaceAccessLevel;
+        int accessLevel = config.StartingAccessLevel;
 
-        return CreateStateForSurfaceAccess(planetDefinition, surfaceAccessLevel);
+        return CreateStateForAccessLevel(planetDefinition, accessLevel);
     }
 
-    public static PlanetMiningState CreateStateForSurfaceAccess(
+    public static PlanetMiningState CreateStateForAccessLevel(
         PlanetDefinition planetDefinition,
-        int surfaceAccessLevel)
+        int accessLevel)
     {
         if (planetDefinition == null)
         {
@@ -28,21 +28,33 @@ public static class MiningStateFactory
         }
 
         PlanetMiningConfig config = planetDefinition.MiningConfig;
-        SurfaceAccessDefinition surfaceAccess = GetSurfaceAccessDefinition(config, surfaceAccessLevel);
+        int maxDepthLevel = config.GetMaxDepthForAccessLevel(accessLevel);
 
         PlanetMiningState state = new PlanetMiningState
         {
             PlanetId = planetDefinition.Id,
-            SurfaceAccessLevel = surfaceAccess.AccessLevel,
+            SurfaceAccessLevel = accessLevel,
+            GridWidth = config.GridWidth,
+            GridHeight = config.GridHeight,
             MinDepthLevel = config.MinDepthLevel,
-            MaxDepthLevel = config.MaxDepthLevel
+            MaxDepthLevel = maxDepthLevel
         };
 
-        List<Vector2Int> coordinates = GenerateCircleCoordinates(surfaceAccess.Radius);
+        List<Vector2Int> validCoordinates = GenerateMaskedGridCoordinates(
+            config.GridWidth,
+            config.GridHeight,
+            config.CircleRadiusInCells,
+            config.MinimumInsideSamplesForValidTile
+        );
 
-        for (int i = 0; i < coordinates.Count; i++)
+        for (int i = 0; i < validCoordinates.Count; i++)
         {
-            MiningTileState tile = CreateTileState(coordinates[i], config.MinDepthLevel, config.MaxDepthLevel);
+            MiningTileState tile = CreateTileState(
+                validCoordinates[i],
+                config.MinDepthLevel,
+                maxDepthLevel
+            );
+
             state.Tiles.Add(tile);
         }
 
@@ -51,7 +63,124 @@ public static class MiningStateFactory
         return state;
     }
 
+    public static List<Vector2Int> GenerateMaskedGridCoordinates(
+        int gridWidth,
+        int gridHeight,
+        float circleRadiusInCells,
+        int minimumInsideSamplesForValidTile)
+    {
+        List<Vector2Int> coordinates = new List<Vector2Int>();
 
+        gridWidth = Mathf.Max(1, gridWidth);
+        gridHeight = Mathf.Max(1, gridHeight);
+        circleRadiusInCells = Mathf.Max(0.1f, circleRadiusInCells);
+        minimumInsideSamplesForValidTile = Mathf.Clamp(minimumInsideSamplesForValidTile, 1, 5);
+
+        Vector2 circleCenter = new Vector2(
+            (gridWidth - 1) * 0.5f,
+            (gridHeight - 1) * 0.5f
+        );
+
+        for (int y = 0; y < gridHeight; y++)
+        {
+            for (int x = 0; x < gridWidth; x++)
+            {
+                if (CellHasEnoughCircleCoverage(
+                    x,
+                    y,
+                    circleCenter,
+                    circleRadiusInCells,
+                    minimumInsideSamplesForValidTile))
+                {
+                    coordinates.Add(new Vector2Int(x, y));
+                }
+            }
+        }
+
+        return coordinates;
+    }
+
+    private static bool CellHasEnoughCircleCoverage(
+        int x,
+        int y,
+        Vector2 circleCenter,
+        float circleRadius,
+        int minimumInsideSamples)
+    {
+        // Five-point sampling lets partial edge tiles exist visually,
+        // while rejecting tiny sliver tiles as mineable targets.
+        int insideSamples = 0;
+
+        if (PointInsideCircle(new Vector2(x, y), circleCenter, circleRadius))
+        {
+            insideSamples++;
+        }
+
+        if (PointInsideCircle(new Vector2(x - 0.5f, y - 0.5f), circleCenter, circleRadius))
+        {
+            insideSamples++;
+        }
+
+        if (PointInsideCircle(new Vector2(x + 0.5f, y - 0.5f), circleCenter, circleRadius))
+        {
+            insideSamples++;
+        }
+
+        if (PointInsideCircle(new Vector2(x - 0.5f, y + 0.5f), circleCenter, circleRadius))
+        {
+            insideSamples++;
+        }
+
+        if (PointInsideCircle(new Vector2(x + 0.5f, y + 0.5f), circleCenter, circleRadius))
+        {
+            insideSamples++;
+        }
+
+        return insideSamples >= minimumInsideSamples;
+    }
+
+    private static bool PointInsideCircle(
+        Vector2 point,
+        Vector2 circleCenter,
+        float circleRadius)
+    {
+        return (point - circleCenter).sqrMagnitude <= circleRadius * circleRadius;
+    }
+
+    private static MiningTileState CreateTileState(
+        Vector2Int coordinate,
+        int minDepthLevel,
+        int maxDepthLevel)
+    {
+        MiningTileState tile = new MiningTileState
+        {
+            Coordinate = coordinate,
+            CurrentDepthLevel = minDepthLevel,
+            IsDepleted = false
+        };
+
+        for (int depth = minDepthLevel; depth <= maxDepthLevel; depth++)
+        {
+            // Temporary health until MiningBalanceDatabase exists.
+            double maxHealth = GetTemporaryLayerHealth(depth);
+            TileLayerState layer = new TileLayerState(depth, maxHealth);
+
+            // Temporary rewards until MiningBalanceDatabase exists.
+            layer.HitRewards.Add(new ResourceReward(ResourceType.Ore, 1));
+            layer.BreakRewards.Add(new ResourceReward(ResourceType.Ore, depth * 5));
+
+            tile.Layers.Add(layer);
+        }
+
+        TileLayerState firstLayer = tile.GetCurrentLayer();
+
+        if (firstLayer != null)
+        {
+            tile.CurrentHealth = firstLayer.MaxHealth;
+        }
+
+        return tile;
+    }
 
     private static void ApplyForcedContents(
         PlanetMiningState state,
@@ -66,7 +195,7 @@ public static class MiningStateFactory
         {
             ForcedTileContentDefinition forcedContent = forcedContents[i];
 
-            if (forcedContent.SurfaceAccessLevel != state.SurfaceAccessLevel)
+            if (forcedContent.AccessLevel != state.SurfaceAccessLevel)
             {
                 continue;
             }
@@ -162,12 +291,6 @@ public static class MiningStateFactory
         return null;
     }
 
-    
-
-
-
-    
-
     private static TileLayerState GetLayer(MiningTileState tile, int depthLevel)
     {
         for (int i = 0; i < tile.Layers.Count; i++)
@@ -179,90 +302,6 @@ public static class MiningStateFactory
         }
 
         return null;
-    }
-
-
-
-
-
-
-
-    public static List<Vector2Int> GenerateCircleCoordinates(int radius)
-    {
-        List<Vector2Int> coordinates = new List<Vector2Int>();
-
-        radius = Mathf.Max(1, radius);
-        int radiusSquared = radius * radius;
-
-        for (int y = -radius; y <= radius; y++)
-        {
-            for (int x = -radius; x <= radius; x++)
-            {
-                int distanceSquared = x * x + y * y;
-
-                if (distanceSquared <= radiusSquared)
-                {
-                    coordinates.Add(new Vector2Int(x, y));
-                }
-            }
-        }
-
-        return coordinates;
-    }
-
-    private static MiningTileState CreateTileState(
-        Vector2Int coordinate,
-        int minDepthLevel,
-        int maxDepthLevel)
-    {
-        MiningTileState tile = new MiningTileState
-        {
-            Coordinate = coordinate,
-            CurrentDepthLevel = minDepthLevel,
-            IsDepleted = false
-        };
-
-        for (int depth = minDepthLevel; depth <= maxDepthLevel; depth++)
-        {
-            // Temporary health until MiningBalanceDatabase exists.
-            double maxHealth = GetTemporaryLayerHealth(depth);
-            TileLayerState layer = new TileLayerState(depth, maxHealth);
-
-            // Temporary rewards until MiningBalanceDatabase exists.
-            layer.HitRewards.Add(new ResourceReward(ResourceType.Ore, 1));
-            layer.BreakRewards.Add(new ResourceReward(ResourceType.Ore, depth * 5));
-
-            tile.Layers.Add(layer);
-        }
-
-        TileLayerState firstLayer = tile.GetCurrentLayer();
-
-        if (firstLayer != null)
-        {
-            tile.CurrentHealth = firstLayer.MaxHealth;
-        }
-
-        return tile;
-    }
-
-    private static SurfaceAccessDefinition GetSurfaceAccessDefinition(
-        PlanetMiningConfig config,
-        int surfaceAccessLevel)
-    {
-        for (int i = 0; i < config.SurfaceAccessLevels.Count; i++)
-        {
-            if (config.SurfaceAccessLevels[i].AccessLevel == surfaceAccessLevel)
-            {
-                return config.SurfaceAccessLevels[i];
-            }
-        }
-
-        Debug.LogWarning(
-            $"Missing surface access level {surfaceAccessLevel}. " +
-            "Using fallback radius 3."
-        );
-
-        return new SurfaceAccessDefinition(surfaceAccessLevel, 3);
     }
 
     private static double GetTemporaryLayerHealth(int depthLevel)

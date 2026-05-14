@@ -1,0 +1,36 @@
+fileFormatVersion: 2
+guid: 2f5f8aa77584fe84d829fef910d1cc24
+TrueTypeFontImporter:
+  externalObjects: {}
+  serializedVersion: 4
+  fontSize: 16
+  forceTextureCase: -2
+  characterSpacing: 0
+  characterPadding: 1
+  includeFontData: 1
+  fontNames:
+  - Gothic A1
+  fallbackFontReferences:
+  - {fileID: 12800000, guid: 3a14a5af76b2aeb448b38265d82be82b, type: 3}
+  - {fileID: 12800000, guid: f85201ee89c131d4483f62a5240cd7c9, type: 3}
+  - {fileID: 12800000, guid: 8562e5131c03427418b3f723c4107292, type: 3}
+  - {fileID: 12800000, guid: 79e13ce7f80b4ba41aaa1bccc6d012e5, type: 3}
+  - {fileID: 12800000, guid: d648fc379d5b9774d8877495b18edb49, type: 3}
+  - {fileID: 12800000, guid: 1abd73d9c3418de4894f55709a3cfa67, type: 3}
+  - {fileID: 12800000, guid: 28e5b649453993544ae05f15c4520356, type: 3}
+  - {fileID: 12800000, guid: a3af55c8531c282488fac92868230f64, type: 3}
+  customCharacters: 
+  fontRenderingMode: 0
+  ascentCalculationMode: 1
+  useLegacyBoundsCalculation: 0
+  shouldRoundAdvanceValue: 1
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 264828
+  packageName: Life Bar Generator - Minimalist theme
+  packageVersion: 1.2
+  assetPath: Assets/PixelNarval/HPBars/Fonts/GothicA1/GothicA1-SemiBold.ttf
+  uploadId: 645380

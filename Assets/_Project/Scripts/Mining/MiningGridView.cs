@@ -1,18 +1,24 @@
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class MiningGridView : MonoBehaviour
 {
+    public event System.Action<PlanetMiningState> MiningStateChanged;
+
     [Header("Data")]
     [SerializeField] private DepthDatabase depthDatabase;
 
     [Header("Tile View")]
     [SerializeField] private MiningTileView tilePrefab;
     [SerializeField] private RectTransform tileParent;
+    [SerializeField] private GridLayoutGroup gridLayoutGroup;
 
     [Header("Layout")]
     [SerializeField] private float tileSize = 48f;
     [SerializeField] private float tileSpacing = 2f;
+    [SerializeField] private RectTransform circleBorder;
+    [SerializeField] private Vector2 circleBorderPadding = Vector2.zero;
 
     private readonly List<MiningTileView> tileViews = new List<MiningTileView>();
     private PlanetMiningState currentState;
@@ -38,7 +44,20 @@ public class MiningGridView : MonoBehaviour
 
         for (int i = 0; i < tileViews.Count; i++)
         {
-            tileViews[i].Refresh(tileViews[i].TileState, depthDatabase);
+            MiningTileView tileView = tileViews[i];
+
+            if (tileView == null)
+            {
+                continue;
+            }
+
+            if (tileView.TileState == null)
+            {
+                tileView.RefreshInvalid();
+                continue;
+            }
+
+            tileView.Refresh(tileView.TileState, depthDatabase);
         }
     }
 
@@ -65,28 +84,80 @@ public class MiningGridView : MonoBehaviour
             return;
         }
 
-        float step = tileSize + tileSpacing;
+        ConfigureGridLayout();
+        ResizeGridVisuals();
 
-        for (int i = 0; i < currentState.Tiles.Count; i++)
+        // Build the full rectangular grid so circular masks still get stable cell spacing.
+        // Cells outside the generated planet surface are invisible placeholders.
+        for (int y = currentState.GridHeight - 1; y >= 0; y--)
         {
-            MiningTileState tileState = currentState.Tiles[i];
-            MiningTileView tileView = Instantiate(tilePrefab, tileParent);
-
-            RectTransform tileRect = tileView.transform as RectTransform;
-
-            if (tileRect != null)
+            for (int x = 0; x < currentState.GridWidth; x++)
             {
-                tileRect.sizeDelta = new Vector2(tileSize, tileSize);
-                tileRect.anchoredPosition = new Vector2(
-                    tileState.Coordinate.x * step,
-                    tileState.Coordinate.y * step
-                );
-            }
+                Vector2Int coordinate = new Vector2Int(x, y);
+                MiningTileState tileState = currentState.GetTile(coordinate);
+                MiningTileView tileView = Instantiate(tilePrefab, tileParent);
 
-            tileView.Refresh(tileState, depthDatabase);
-            tileView.SetClickedCallback(HandleTileClicked);
-            tileViews.Add(tileView);
+                RectTransform tileRect = tileView.transform as RectTransform;
+
+                if (tileRect != null)
+                {
+                    tileRect.sizeDelta = new Vector2(tileSize, tileSize);
+                }
+
+                if (tileState == null)
+                {
+                    tileView.RefreshInvalid();
+                }
+                else
+                {
+                    tileView.Refresh(tileState, depthDatabase);
+                    tileView.SetClickedCallback(HandleTileClicked);
+                }
+
+                tileViews.Add(tileView);
+            }
         }
+    }
+
+    private void ConfigureGridLayout()
+    {
+        if (gridLayoutGroup == null && tileParent != null)
+        {
+            gridLayoutGroup = tileParent.GetComponent<GridLayoutGroup>();
+        }
+
+        if (gridLayoutGroup == null)
+        {
+            return;
+        }
+
+        gridLayoutGroup.constraint = GridLayoutGroup.Constraint.FixedColumnCount;
+        gridLayoutGroup.constraintCount = currentState.GridWidth;
+        gridLayoutGroup.cellSize = new Vector2(tileSize, tileSize);
+        gridLayoutGroup.spacing = new Vector2(tileSpacing, tileSpacing);
+    }
+
+    private void ResizeGridVisuals()
+    {
+        Vector2 gridSize = GetGridVisualSize();
+
+        if (tileParent != null)
+        {
+            tileParent.sizeDelta = gridSize;
+        }
+
+        if (circleBorder != null)
+        {
+            circleBorder.sizeDelta = gridSize + circleBorderPadding;
+        }
+    }
+
+    private Vector2 GetGridVisualSize()
+    {
+        float width = currentState.GridWidth * tileSize + Mathf.Max(0, currentState.GridWidth - 1) * tileSpacing;
+        float height = currentState.GridHeight * tileSize + Mathf.Max(0, currentState.GridHeight - 1) * tileSpacing;
+
+        return new Vector2(width, height);
     }
 
     private void ClearExistingViewsOnly()
@@ -121,6 +192,7 @@ public class MiningGridView : MonoBehaviour
 
         ApplyResourceRewards(result);
         RefreshAffectedTiles(result);
+        MiningStateChanged?.Invoke(currentState);
 
         Debug.Log(
             $"Mined {tileView.TileState.Coordinate}. " +

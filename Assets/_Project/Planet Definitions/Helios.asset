@@ -19,28 +19,27 @@ MonoBehaviour:
   AvailableResources: 00000000
   InitiallyUnlocked: 1
   MiningConfig:
+    GridWidth: 6
+    GridHeight: 6
+    CircleRadiusInCells: 3
+    MinimumInsideSamplesForValidTile: 3
     MinDepthLevel: 1
-    MaxDepthLevel: 3
-    StartingSurfaceAccessLevel: 1
-    MaxSurfaceAccessLevel: 3
-    SurfaceAccessLevels:
+    StartingAccessLevel: 1
+    MaxAccessLevel: 2
+    AccessLevels:
     - AccessLevel: 1
-      Radius: 5
+      MaxDepthLevel: 2
     - AccessLevel: 2
-      Radius: 10
+      MaxDepthLevel: 3
     - AccessLevel: 3
-      Radius: 15
-    - AccessLevel: 3
-      Radius: 20
-    - AccessLevel: 3
-      Radius: 25
+      MaxDepthLevel: 4
     HealthMultiplier: 1
     RewardMultiplier: 1
     LootChanceMultiplier: 1
     EnemyChanceMultiplier: 1
     ForcedContents:
     - Id: debug_forced_loot_01
-      SurfaceAccessLevel: 1
+      AccessLevel: 0
       DepthLevel: 2
       UseSpecificCoordinate: 1
       Coordinate: {x: 0, y: 0}
@@ -52,7 +51,7 @@ MonoBehaviour:
         MaxHealth: 0
       SpawnOnce: 1
     - Id: debug_forced_enemy_01
-      SurfaceAccessLevel: 1
+      AccessLevel: 0
       DepthLevel: 1
       UseSpecificCoordinate: 1
       Coordinate: {x: 1, y: 0}

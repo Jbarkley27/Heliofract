@@ -1,0 +1,36 @@
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+using UnityEditor;
+
+namespace PixelNarval.HPBars
+{
+    [CustomPropertyDrawer(typeof(NoNullAttribute))]
+    public class NoNullDrawer : PropertyDrawer
+    {
+        public override float GetPropertyHeight(SerializedProperty property, GUIContent label)
+        {
+            return EditorGUI.GetPropertyHeight(property, label, true) + ((property.objectReferenceValue == null) ? EditorGUIUtility.singleLineHeight : 0);
+        }
+
+        public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
+        {
+            Color backup = GUI.backgroundColor;
+            if (property.objectReferenceValue == null)
+            {
+                GUI.backgroundColor = Color.red;
+            }
+
+            EditorGUI.PropertyField(position, property, label, true);
+
+            if (property.objectReferenceValue == null)
+            {
+                GUI.backgroundColor = backup;
+                Rect helpBoxRect = position;
+                helpBoxRect.height = EditorGUIUtility.singleLineHeight;
+                helpBoxRect.position += new Vector2(0, EditorGUIUtility.singleLineHeight + EditorGUIUtility.standardVerticalSpacing);
+                EditorGUI.HelpBox(helpBoxRect, $"{property.displayName} can't be null", MessageType.Error);
+            }
+        }
+    }
+}

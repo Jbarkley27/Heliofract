@@ -1,0 +1,18 @@
+fileFormatVersion: 2
+guid: 547ce3492f8f56441956cfb9c9feb0e9
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences: []
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 264828
+  packageName: Life Bar Generator - Minimalist theme
+  packageVersion: 1.2
+  assetPath: Assets/PixelNarval/Scripts/Utils/Attributes/Editor/ReadOnlyDrawer.cs
+  uploadId: 645380

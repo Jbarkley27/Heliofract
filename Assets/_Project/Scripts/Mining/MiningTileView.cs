@@ -8,6 +8,7 @@ public class MiningTileView : MonoBehaviour
     [SerializeField] private Image borderImage;
     [SerializeField] private Image contentIconImage;
     [SerializeField] private GameObject depletedRoot;
+    [SerializeField] private GameObject nonMineableRoot;
 
     [Header("Content Icons")]
     [SerializeField] private Sprite unknownContentSprite;
@@ -16,6 +17,7 @@ public class MiningTileView : MonoBehaviour
 
     [Header("Input")]
     [SerializeField] private Button button;
+    [SerializeField] private CanvasGroup canvasGroup;
 
     private MiningTileState tileState;
 
@@ -28,6 +30,11 @@ public class MiningTileView : MonoBehaviour
         if (button == null)
         {
             button = GetComponent<Button>();
+        }
+
+        if (canvasGroup == null)
+        {
+            canvasGroup = GetComponent<CanvasGroup>();
         }
 
         if (button != null)
@@ -67,16 +74,83 @@ public class MiningTileView : MonoBehaviour
 
         if (tileState == null)
         {
-            gameObject.SetActive(false);
+            RefreshInvalid();
             return;
         }
 
-        gameObject.SetActive(true);
-
+        RefreshValidRootState();
         RefreshDepthVisual(depthDatabase);
         RefreshContentIcon();
         RefreshDepletedState();
         RefreshInputState();
+    }
+
+    public void RefreshInvalid()
+    {
+        tileState = null;
+
+        // Keep this object active so GridLayoutGroup still reserves the cell.
+        // It is visible but non-interactive, which preserves the planet shape
+        // without letting invalid edge cells count as mineable tiles.
+        if (canvasGroup != null)
+        {
+            canvasGroup.alpha = 1f;
+            canvasGroup.interactable = false;
+            canvasGroup.blocksRaycasts = false;
+        }
+
+        if (fillImage != null)
+        {
+            fillImage.enabled = false;
+            fillImage.raycastTarget = false;
+        }
+
+        if (borderImage != null)
+        {
+            borderImage.enabled = false;
+            borderImage.raycastTarget = false;
+        }
+
+        if (contentIconImage != null)
+        {
+            contentIconImage.enabled = false;
+            contentIconImage.raycastTarget = false;
+        }
+
+        if (depletedRoot != null)
+        {
+            depletedRoot.SetActive(false);
+        }
+
+        if (nonMineableRoot != null)
+        {
+            nonMineableRoot.SetActive(true);
+        }
+
+        if (button != null)
+        {
+            button.interactable = false;
+        }
+    }
+
+    private void RefreshValidRootState()
+    {
+        if (canvasGroup != null)
+        {
+            canvasGroup.alpha = 1f;
+            canvasGroup.interactable = true;
+            canvasGroup.blocksRaycasts = true;
+        }
+
+        if (fillImage != null)
+        {
+            fillImage.raycastTarget = true;
+        }
+
+        if (nonMineableRoot != null)
+        {
+            nonMineableRoot.SetActive(false);
+        }
     }
 
     private void RefreshDepthVisual(DepthDatabase depthDatabase)
@@ -109,6 +183,7 @@ public class MiningTileView : MonoBehaviour
 
         contentIconImage.enabled = false;
         contentIconImage.sprite = null;
+        contentIconImage.raycastTarget = false;
 
         if (tileState.IsDepleted)
         {

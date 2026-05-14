@@ -5,15 +5,24 @@ using UnityEngine;
 [Serializable]
 public class PlanetMiningConfig
 {
+    [Header("Grid Shape")]
+    [Min(1)] public int GridWidth = 10;
+    [Min(1)] public int GridHeight = 10;
+
+    [Tooltip("Circle radius measured in tile-cell units. Partial edge tiles count as valid if they overlap this circle.")]
+    [Min(0.1f)] public float CircleRadiusInCells = 5f;
+
+    [Tooltip("A tile is mineable only if this many sample points are inside the circle. Higher values remove tiny edge sliver tiles.")]
+    [Range(1, 5)] public int MinimumInsideSamplesForValidTile = 3;
+
     [Header("Depth Range")]
     [Min(1)] public int MinDepthLevel = 1;
-    [Min(1)] public int MaxDepthLevel = 3;
 
-    [Header("Surface Access")]
-    [Min(1)] public int StartingSurfaceAccessLevel = 1;
-    [Min(1)] public int MaxSurfaceAccessLevel = 3;
+    [Header("Access")]
+    [Min(1)] public int StartingAccessLevel = 1;
+    [Min(1)] public int MaxAccessLevel = 3;
 
-    public List<SurfaceAccessDefinition> SurfaceAccessLevels = new List<SurfaceAccessDefinition>();
+    public List<PlanetAccessDefinition> AccessLevels = new List<PlanetAccessDefinition>();
 
     [Header("Planet Modifiers")]
     [Min(0)] public double HealthMultiplier = 1;
@@ -23,18 +32,36 @@ public class PlanetMiningConfig
 
     [Header("Authored Content")]
     public List<ForcedTileContentDefinition> ForcedContents = new List<ForcedTileContentDefinition>();
+
+    public int GetMaxDepthForAccessLevel(int accessLevel)
+    {
+        for (int i = 0; i < AccessLevels.Count; i++)
+        {
+            if (AccessLevels[i].AccessLevel == accessLevel)
+            {
+                return AccessLevels[i].MaxDepthLevel;
+            }
+        }
+
+        Debug.LogWarning(
+            $"Missing access level {accessLevel}. " +
+            $"Using MinDepthLevel {MinDepthLevel} as fallback max depth."
+        );
+
+        return MinDepthLevel;
+    }
 }
 
 [Serializable]
-public struct SurfaceAccessDefinition
+public struct PlanetAccessDefinition
 {
     [Min(1)] public int AccessLevel;
-    [Min(1)] public int Radius;
+    [Min(1)] public int MaxDepthLevel;
 
-    public SurfaceAccessDefinition(int accessLevel, int radius)
+    public PlanetAccessDefinition(int accessLevel, int maxDepthLevel)
     {
         AccessLevel = accessLevel;
-        Radius = radius;
+        MaxDepthLevel = maxDepthLevel;
     }
 }
 
@@ -44,7 +71,7 @@ public struct ForcedTileContentDefinition
     public string Id;
 
     [Header("Placement")]
-    [Min(1)] public int SurfaceAccessLevel;
+    [Min(1)] public int AccessLevel;
     [Min(1)] public int DepthLevel;
     public bool UseSpecificCoordinate;
     public Vector2Int Coordinate;

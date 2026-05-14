@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 23222dc47620d83488f33049d48aff2f
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 4343727234628468602
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 264828
+  packageName: Life Bar Generator - Minimalist theme
+  packageVersion: 1.2
+  assetPath: Assets/PixelNarval/HPBars/Predefined/Minimalistic/Sprites/Simple/Minimalist.spriteatlas
+  uploadId: 645380

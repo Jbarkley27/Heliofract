@@ -7,6 +7,8 @@ public class PlanetMiningState
 {
     public string PlanetId;
     public int SurfaceAccessLevel;
+    public int GridWidth;
+    public int GridHeight;
     public int MinDepthLevel;
     public int MaxDepthLevel;
     public List<MiningTileState> Tiles = new List<MiningTileState>();
