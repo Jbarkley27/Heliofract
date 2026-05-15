@@ -31,7 +31,6 @@ RectTransform:
   m_ConstrainProportionsScale: 1
   m_Children: []
   m_Father: {fileID: 6260846493366702082}
-  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.057478283, y: 0.05747814}
   m_AnchorMax: {x: 0.9425217, y: 0.94252187}
@@ -107,7 +106,6 @@ RectTransform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 6260846493216278687}
-  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.29251117, y: 0.40721995}
   m_AnchorMax: {x: 0.7074878, y: 0.59277993}
@@ -180,20 +178,23 @@ MonoBehaviour:
   m_VerticalAlignment: 512
   m_textAlignment: 65535
   m_characterSpacing: 0
+  m_characterHorizontalScale: 1
   m_wordSpacing: 0
   m_lineSpacing: 0
   m_lineSpacingMax: 0
   m_paragraphSpacing: 0
   m_charWidthMaxAdj: 0
-  m_enableWordWrapping: 1
+  m_TextWrappingMode: 1
   m_wordWrappingRatios: 0.4
   m_overflowMode: 0
   m_linkedTextComponent: {fileID: 0}
   parentLinkedComponent: {fileID: 0}
   m_enableKerning: 1
+  m_ActiveFontFeatures: 00000000
   m_enableExtraPadding: 0
   checkPaddingRequired: 0
   m_isRichText: 1
+  m_EmojiFallbackSupport: 1
   m_parseCtrlCharacters: 1
   m_isOrthographic: 1
   m_isCullingEnabled: 0
@@ -242,7 +243,6 @@ RectTransform:
   m_ConstrainProportionsScale: 1
   m_Children: []
   m_Father: {fileID: 6260846493366702082}
-  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.057478283, y: 0.05747814}
   m_AnchorMax: {x: 0.9425217, y: 0.94252187}
@@ -323,7 +323,6 @@ RectTransform:
   - {fileID: 6260846493366702082}
   - {fileID: 6260846492085764432}
   m_Father: {fileID: 0}
-  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
@@ -381,6 +380,9 @@ MonoBehaviour:
   transitionData: {fileID: 6260846493216278674}
   stopped: 0
   simulateOnEditor: 0
+  childTransitions: []
+  compositeTransitionTypeEnum: 0
+  compositeTransitionWaitFor: 0
   transitionConfig:
     advancedConfig: 1
     fillType: 0
@@ -457,6 +459,7 @@ MonoBehaviour:
   fillImage: {fileID: 6260846492844393510}
   echoImage: {fileID: 6260846491825182080}
   invertValue: 0
+  invertedEcho: 0
 --- !u!114 &6260846493216278672
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -506,7 +509,6 @@ RectTransform:
   - {fileID: 6260846491825182095}
   - {fileID: 6260846492844393509}
   m_Father: {fileID: 6260846493216278687}
-  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}

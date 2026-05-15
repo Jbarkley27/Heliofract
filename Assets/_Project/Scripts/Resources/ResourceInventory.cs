@@ -25,22 +25,7 @@ public class ResourceInventory : MonoBehaviour
 
     public void SetAmount(ResourceType resourceType, double amount)
     {
-        amount = Math.Max(0, amount);
-
-        for (int i = 0; i < resourceAmounts.Count; i++)
-        {
-            if (resourceAmounts[i].Type != resourceType)
-            {
-                continue;
-            }
-
-            resourceAmounts[i] = new ResourceAmount(resourceType, amount);
-            ResourceAmountsChanged?.Invoke();
-            return;
-        }
-
-        resourceAmounts.Add(new ResourceAmount(resourceType, amount));
-        ResourceAmountsChanged?.Invoke();
+        SetAmountInternal(resourceType, amount, true);
     }
 
     public void AddAmount(ResourceType resourceType, double amount)
@@ -50,7 +35,69 @@ public class ResourceInventory : MonoBehaviour
             return;
         }
 
-        SetAmount(resourceType, GetAmount(resourceType) + amount);
+        SetAmountInternal(resourceType, GetAmount(resourceType) + amount, true);
+    }
+
+    public void AddAmounts(IReadOnlyList<ResourceAmount> amounts)
+    {
+        if (amounts == null || amounts.Count == 0)
+        {
+            return;
+        }
+
+        bool changed = false;
+
+        for (int i = 0; i < amounts.Count; i++)
+        {
+            ResourceAmount amount = amounts[i];
+
+            if (amount.Amount == 0)
+            {
+                continue;
+            }
+
+            SetAmountInternal(amount.Type, GetAmount(amount.Type) + amount.Amount, false);
+            changed = true;
+        }
+
+        if (changed)
+        {
+            ResourceAmountsChanged?.Invoke();
+        }
+    }
+
+    private void SetAmountInternal(ResourceType resourceType, double amount, bool notifyChanged)
+    {
+        amount = Math.Max(0, amount);
+
+        for (int i = 0; i < resourceAmounts.Count; i++)
+        {
+            if (resourceAmounts[i].Type != resourceType)
+            {
+                continue;
+            }
+
+            if (resourceAmounts[i].Amount == amount)
+            {
+                return;
+            }
+
+            resourceAmounts[i] = new ResourceAmount(resourceType, amount);
+
+            if (notifyChanged)
+            {
+                ResourceAmountsChanged?.Invoke();
+            }
+
+            return;
+        }
+
+        resourceAmounts.Add(new ResourceAmount(resourceType, amount));
+
+        if (notifyChanged)
+        {
+            ResourceAmountsChanged?.Invoke();
+        }
     }
 }
 

@@ -1,0 +1,34 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ca1195042825e487bb3858416116288f, type: 3}
+  m_Name: Weather Scanner
+  m_EditorClassIdentifier: Assembly-CSharp::ShipSystemDefinition
+  Id: weather_scanner
+  DisplayName: Weather Scanner
+  Icon: {fileID: 21300000, guid: 14d8907e10b874d99b2ca19641cd4741, type: 3}
+  Description: Restores Helios' extraction systems, enabling mining drones and access
+    to new planetary resources.
+  Tiers:
+  - Tier: 1
+    DisplayName: Reignite Extraction Core
+    Description: Begin exploring the planet Ion and purchase drones to help with
+      mining.
+    Costs:
+    - Type: 0
+      Amount: 2500
+    UnlockEffects:
+    - Type: 0
+      TargetId: ion_planet
+      Description: 
+    - Type: 1
+      TargetId: mining_drones
+      Description: Unlocks Basic Mining Drone

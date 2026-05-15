@@ -3,6 +3,8 @@ using UnityEngine;
 
 public static class MiningSystem
 {
+    public static bool LogMiningEvents;
+
     public static MiningOperationResult MineArea(
         PlanetMiningState planetState,
         Vector2Int centerCoordinate,
@@ -126,7 +128,10 @@ public static class MiningSystem
 
         planetState.Stats.AddEnemyDefeated(content.ContentId);
 
-        Debug.Log($"Enemy defeated: {content.ContentId} on tile {tile.Coordinate} depth {layer.DepthLevel}");
+        if (LogMiningEvents)
+        {
+            Debug.Log($"Enemy defeated: {content.ContentId} on tile {tile.Coordinate} depth {layer.DepthLevel}");
+        }
     }
 
     private static void AddLayerHitRewards(
@@ -241,19 +246,25 @@ public static class MiningSystem
             layer.Content.IsResolved = true;
             planetState.Stats.AddLoot(layer.Content.Rarity);
 
-            Debug.Log(
-                $"Loot collected: {layer.Content.ContentId} " +
-                $"({layer.Content.Rarity}) on tile {tile.Coordinate} depth {layer.DepthLevel}"
-            );
+            if (LogMiningEvents)
+            {
+                Debug.Log(
+                    $"Loot collected: {layer.Content.ContentId} " +
+                    $"({layer.Content.Rarity}) on tile {tile.Coordinate} depth {layer.DepthLevel}"
+                );
+            }
         }
         else if (layer.Content.Type == TileContentType.Special)
         {
             layer.Content.IsResolved = true;
 
-            Debug.Log(
-                $"Special content resolved: {layer.Content.ContentId} " +
-                $"on tile {tile.Coordinate} depth {layer.DepthLevel}"
-            );
+            if (LogMiningEvents)
+            {
+                Debug.Log(
+                    $"Special content resolved: {layer.Content.ContentId} " +
+                    $"on tile {tile.Coordinate} depth {layer.DepthLevel}"
+                );
+            }
         }
     }
 
@@ -340,7 +351,10 @@ public static class MiningSystem
         if (planetState.IsSurfaceComplete())
         {
             planetState.Stats.SurfaceAreasCompleted++;
-            Debug.Log($"Surface access level {planetState.SurfaceAccessLevel} complete for {planetState.PlanetId}");
+            if (LogMiningEvents)
+            {
+                Debug.Log($"Surface access level {planetState.SurfaceAccessLevel} complete for {planetState.PlanetId}");
+            }
         }
     }
 }

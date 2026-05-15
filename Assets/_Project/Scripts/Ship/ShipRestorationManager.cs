@@ -8,6 +8,7 @@ public class ShipRestorationManager : MonoBehaviour
     public event Action<ShipSystemDefinition, ShipSystemTierDefinition> ShipSystemTierRepaired;
 
     [Header("References")]
+    [SerializeField] private GameState gameState;
     [SerializeField] private ResourceInventory resourceInventory;
 
     [Header("Systems")]
@@ -22,7 +23,12 @@ public class ShipRestorationManager : MonoBehaviour
 
     private void Awake()
     {
-        InitializeStates();
+        if (gameState == null)
+        {
+            gameState = FindFirstObjectByType<GameState>();
+        }
+
+        InitializeStates(); 
     }
 
 
@@ -233,11 +239,15 @@ public class ShipRestorationManager : MonoBehaviour
 
     private void SpendCosts(List<ResourceCost> costs)
     {
+        List<ResourceAmount> spendAmounts = new List<ResourceAmount>();
+
         for (int i = 0; i < costs.Count; i++)
         {
             ResourceCost cost = costs[i];
-            resourceInventory.AddAmount(cost.Type, -cost.Amount);
+            spendAmounts.Add(new ResourceAmount(cost.Type, -cost.Amount));
         }
+
+        resourceInventory.AddAmounts(spendAmounts);
     }
 
     private void ApplyUnlockEffects(List<ShipUnlockEffectDefinition> unlockEffects)
@@ -248,6 +258,22 @@ public class ShipRestorationManager : MonoBehaviour
 
             switch (effect.Type)
             {
+                case ShipUnlockEffectType.UnlockPlanet:
+                    UnlockPlanet(effect.TargetId);
+                    break;
+
+                case ShipUnlockEffectType.UnlockActivity:
+                    UnlockActivity(effect.TargetId);
+                    break;
+
+                case ShipUnlockEffectType.UnlockDronePurchasing:
+                    UnlockDronePurchasing();
+                    break;
+
+                case ShipUnlockEffectType.UnlockDroneUpgrades:
+                    UnlockDroneUpgrades();
+                    break;
+
                 case ShipUnlockEffectType.RevealShipSystem:
                     RevealSystem(effect.TargetId);
                     break;
@@ -257,6 +283,53 @@ public class ShipRestorationManager : MonoBehaviour
                     break;
             }
         }
+    }
+
+    private void UnlockPlanet(string planetId)
+    {
+        if (gameState == null || string.IsNullOrWhiteSpace(planetId))
+        {
+            return;
+        }
+
+        PlanetActivity[] planets = FindObjectsByType<PlanetActivity>(FindObjectsSortMode.None);
+
+        for (int i = 0; i < planets.Length; i++)
+        {
+            PlanetActivity planet = planets[i];
+
+            if (planet == null || planet.Definition == null || planet.Definition.Id != planetId)
+            {
+                continue;
+            }
+
+            gameState.UnlockPlanet(planet.Definition);
+            planet.State = ActivityState.Unlocked;
+            return;
+        }
+
+        // Keep the activity id unlocked even if the scene node is added later.
+        gameState.AddUnlockedActivity(planetId);
+    }
+
+    private void UnlockActivity(string activityId)
+    {
+        if (gameState == null || string.IsNullOrWhiteSpace(activityId))
+        {
+            return;
+        }
+
+        gameState.AddUnlockedActivity(activityId);
+    }
+
+    private void UnlockDronePurchasing()
+    {
+        gameState?.UnlockDronePurchasing();
+    }
+
+    private void UnlockDroneUpgrades()
+    {
+        gameState?.UnlockDroneUpgrades();
     }
 
     private void HandleResourceAmountsChanged()

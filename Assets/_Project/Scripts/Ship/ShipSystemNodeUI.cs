@@ -42,7 +42,11 @@ public class ShipSystemNodeUI : MonoBehaviour, IPointerEnterHandler, IPointerExi
     [SerializeField, Range(0f, 1f)] private float maxedAlpha = 1f;
 
     private bool progressInitialized;
+    private bool trackInitialized;
     private bool isHovered;
+    private int lastTrackMaxTierCount = -1;
+    private int lastProgressMaxTierCount = -1;
+    private int lastProgressTier = -1;
 
     private void Awake()
     {
@@ -249,16 +253,28 @@ public class ShipSystemNodeUI : MonoBehaviour, IPointerEnterHandler, IPointerExi
         int maxTierCount = GetMaxTierCount();
         int currentTier = state != null ? state.CurrentTier : 0;
 
-        tierProgressData.SetMaxNumberOnly(maxTierCount);
+        if (lastProgressMaxTierCount != maxTierCount)
+        {
+            tierProgressData.SetMaxNumberOnly(maxTierCount);
+            lastProgressMaxTierCount = maxTierCount;
+            progressInitialized = false;
+        }
+
+        if (progressInitialized && lastProgressTier == currentTier)
+        {
+            return;
+        }
 
         if (!progressInitialized || !animateProgressChanges)
         {
             tierProgressData.ForceCurrentValue(maxTierCount <= 0 ? 0f : (float)currentTier / maxTierCount);
             progressInitialized = true;
+            lastProgressTier = currentTier;
             return;
         }
 
         tierProgressData.StartTransitionToInt(currentTier);
+        lastProgressTier = currentTier;
     }
 
     private void RefreshTierTrack()
@@ -270,8 +286,16 @@ public class ShipSystemNodeUI : MonoBehaviour, IPointerEnterHandler, IPointerExi
 
         int maxTierCount = GetMaxTierCount();
 
+        if (trackInitialized && lastTrackMaxTierCount == maxTierCount)
+        {
+            return;
+        }
+
         tierTrackData.SetMaxNumberOnly(maxTierCount);
         tierTrackData.ForceCurrentValue(1f);
+
+        lastTrackMaxTierCount = maxTierCount;
+        trackInitialized = true;
     }
 
     private string GetCostText(ShipSystemTierDefinition nextTier)

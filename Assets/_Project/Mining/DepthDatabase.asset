@@ -15,7 +15,7 @@ MonoBehaviour:
   depths:
   - Level: 1
     DisplayName: Surface
-    Color: {r: 0.8324136, g: 0.8867924, b: 0.8690735, a: 1}
+    Color: {r: 0.39609292, g: 0.6509434, b: 0.57812893, a: 1}
   - Level: 2
     DisplayName: Shallow Crust
     Color: {r: 0.13737096, g: 0.46226418, b: 0.39111966, a: 1}

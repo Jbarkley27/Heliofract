@@ -25,6 +25,7 @@ public class MiningGridView : MonoBehaviour
 
     [SerializeField] private MiningToolDefinition miningTool;
     [SerializeField] private ResourceInventory resourceInventory;
+    [SerializeField] private bool logMiningClicks;
     
 
 
@@ -194,12 +195,15 @@ public class MiningGridView : MonoBehaviour
         RefreshAffectedTiles(result);
         MiningStateChanged?.Invoke(currentState);
 
-        Debug.Log(
-            $"Mined {tileView.TileState.Coordinate}. " +
-            $"Crit: {result.WasCritical}. " +
-            $"Rewards: {FormatRewards(result)}",
-            this
-        );
+        if (logMiningClicks)
+        {
+            Debug.Log(
+                $"Mined {tileView.TileState.Coordinate}. " +
+                $"Crit: {result.WasCritical}. " +
+                $"Rewards: {FormatRewards(result)}",
+                this
+            );
+        }
     }
 
 
@@ -212,11 +216,15 @@ public class MiningGridView : MonoBehaviour
             return;
         }
 
+        List<ResourceAmount> rewardAmounts = new List<ResourceAmount>();
+
         for (int i = 0; i < result.TotalResourceRewards.Count; i++)
         {
             ResourceReward reward = result.TotalResourceRewards[i];
-            resourceInventory.AddAmount(reward.Type, reward.Amount);
+            rewardAmounts.Add(new ResourceAmount(reward.Type, reward.Amount));
         }
+
+        resourceInventory.AddAmounts(rewardAmounts);
     }
 
     private void RefreshAffectedTiles(MiningOperationResult result)

@@ -1,4 +1,5 @@
 using DG.Tweening;
+using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -9,14 +10,14 @@ public class PlanetMapDetailsView : MonoBehaviour, IPointerEnterHandler, IPointe
     [SerializeField] private PlanetActivity planetActivity;
 
     [Header("Level 1 - Always Visible")]
-    [SerializeField] private CanvasGroup alwaysVisibleGroup;
+    [SerializeField] private List<CanvasGroup> alwaysVisibleGroups = new List<CanvasGroup>();
     [SerializeField] private TMP_Text planetNameText;
     [SerializeField] private TMP_Text surfaceIntegrityText;
     [SerializeField] private TMP_Text accessLevelText;
     [SerializeField] private TMP_Text dronesText;
 
     [Header("Level 2 - Pointer Near Planet")]
-    [SerializeField] private CanvasGroup nearbyDetailsGroup;
+    [SerializeField] private List<CanvasGroup> nearbyDetailsGroups = new List<CanvasGroup>();
     [SerializeField] private GameObject planetUpgradeRoot;
     [SerializeField] private GameObject weatherRoot;
     [SerializeField] private TMP_Text lootProgressText;
@@ -24,20 +25,25 @@ public class PlanetMapDetailsView : MonoBehaviour, IPointerEnterHandler, IPointe
     [SerializeField] private Transform hoverDecorationSpinner;
     [SerializeField] private float spinnerRotationDegreesPerSecond = 18f;
 
+    [Header("Loot Popup")]
+    [SerializeField] private InfoPopupTrigger lootPopupTrigger;
+
     [Header("Level 3 - Hover Detail Targets")]
     [SerializeField] private CanvasGroup extraDetailsGroup;
 
-    [Header("Locked State")]
-    [SerializeField] private GameObject unlockedRoot;
+    [Header("Activity State Roots")]
+    [SerializeField] private GameObject hiddenRoot;
     [SerializeField] private GameObject lockedRoot;
-    [SerializeField] private TMP_Text lockedText;
-    [SerializeField] private string lockedMessage = "Undiscovered";
+    [SerializeField] private GameObject unlockedRoot;
+    [SerializeField] private TMP_Text stateText;
+    [SerializeField] private string hiddenMessage = "Undiscovered";
+    [SerializeField] private string lockedMessage = "Locked";
 
     [Header("Timing")]
     [SerializeField] private float detailsFadeDuration = 0.15f;
     [SerializeField] private Ease detailsEase = Ease.OutQuad;
 
-    private Tween nearbyTween;
+    private readonly List<Tween> nearbyTweens = new List<Tween>();
     private Tween extraTween;
     private bool pointerNear;
 
@@ -48,7 +54,7 @@ public class PlanetMapDetailsView : MonoBehaviour, IPointerEnterHandler, IPointe
             planetActivity = GetComponentInParent<PlanetActivity>();
         }
 
-        SetCanvasGroup(nearbyDetailsGroup, 0f, false);
+        SetCanvasGroups(nearbyDetailsGroups, 0f, false);
         SetCanvasGroup(extraDetailsGroup, 0f, false);
     }
 
@@ -72,7 +78,7 @@ public class PlanetMapDetailsView : MonoBehaviour, IPointerEnterHandler, IPointe
             planetActivity.StateChanged -= HandleActivityStateChanged;
         }
 
-        nearbyTween?.Kill();
+        KillTweens(nearbyTweens);
         extraTween?.Kill();
     }
 
@@ -91,21 +97,36 @@ public class PlanetMapDetailsView : MonoBehaviour, IPointerEnterHandler, IPointe
 
     public void OnPointerEnter(PointerEventData eventData)
     {
-        pointerNear = true;
-        ShowNearbyDetails(true);
+        SetPointerNear(true);
     }
 
     public void OnPointerExit(PointerEventData eventData)
     {
-        pointerNear = false;
-        ShowNearbyDetails(false);
+        SetPointerNear(false);
         ShowExtraDetails(false);
+    }
+
+    public void SetPointerNear(bool isNear)
+    {
+        if (pointerNear == isNear)
+        {
+            return;
+        }
+
+        pointerNear = isNear;
+        ShowNearbyDetails(isNear);
+
+        if (!isNear)
+        {
+            ShowExtraDetails(false);
+        }
     }
 
     public void Refresh()
     {
         PlanetDefinition definition = planetActivity != null ? planetActivity.Definition : null;
         PlanetMiningState miningState = planetActivity != null ? planetActivity.MiningState : null;
+        ActivityState activityState = planetActivity != null ? planetActivity.State : ActivityState.Hidden;
         bool unlocked = planetActivity != null && planetActivity.CanInteract();
 
         if (planetNameText != null)
@@ -137,22 +158,19 @@ public class PlanetMapDetailsView : MonoBehaviour, IPointerEnterHandler, IPointe
             lootProgressText.text = GetLootProgressText(miningState);
         }
 
-        if (lockedText != null)
+        if (lootPopupTrigger != null)
         {
-            lockedText.text = lockedMessage;
+            lootPopupTrigger.SetData(GetLootPopupData(miningState));
         }
 
-        if (unlockedRoot != null)
+        if (stateText != null)
         {
-            unlockedRoot.SetActive(unlocked);
+            stateText.text = GetStateMessage(activityState);
         }
 
-        if (lockedRoot != null)
-        {
-            lockedRoot.SetActive(!unlocked);
-        }
+        RefreshStateRoots(activityState);
 
-        SetCanvasGroup(alwaysVisibleGroup, 1f, true);
+        SetCanvasGroups(alwaysVisibleGroups, unlocked ? 1f : 0f, unlocked);
 
         if (!unlocked)
         {
@@ -181,18 +199,9 @@ public class PlanetMapDetailsView : MonoBehaviour, IPointerEnterHandler, IPointe
     {
         bool canShow = show && planetActivity != null && planetActivity.CanInteract();
 
-        nearbyTween?.Kill();
+        KillTweens(nearbyTweens);
 
-        if (nearbyDetailsGroup == null)
-        {
-            return;
-        }
-
-        nearbyDetailsGroup.interactable = canShow;
-        nearbyDetailsGroup.blocksRaycasts = canShow;
-        nearbyTween = nearbyDetailsGroup
-            .DOFade(canShow ? 1f : 0f, detailsFadeDuration)
-            .SetEase(detailsEase);
+        FadeCanvasGroups(nearbyDetailsGroups, canShow ? 1f : 0f, canShow, nearbyTweens);
     }
 
     private string GetSurfaceIntegrityText(PlanetMiningState miningState)
@@ -216,11 +225,27 @@ public class PlanetMapDetailsView : MonoBehaviour, IPointerEnterHandler, IPointe
     {
         if (miningState == null)
         {
-            return "Loot -- / --";
+            return "--/--";
         }
 
-        int totalContent = 0;
-        int resolvedContent = 0;
+        GetContentCounts(miningState, out PlanetContentCounts counts);
+        return $"{counts.LootLeft}/{counts.TotalLoot}";
+    }
+
+    private InfoPopupData GetLootPopupData(PlanetMiningState miningState)
+    {
+        if (miningState == null)
+        {
+            return new InfoPopupData("Loot", "Loot left --\nTotal loot --");
+        }
+
+        GetContentCounts(miningState, out PlanetContentCounts counts);
+        return new InfoPopupData("Loot", $"Loot left {counts.LootLeft}\nTotal loot {counts.TotalLoot}");
+    }
+
+    private void GetContentCounts(PlanetMiningState miningState, out PlanetContentCounts counts)
+    {
+        counts = new PlanetContentCounts();
 
         for (int i = 0; i < miningState.Tiles.Count; i++)
         {
@@ -235,21 +260,59 @@ public class PlanetMapDetailsView : MonoBehaviour, IPointerEnterHandler, IPointe
                     continue;
                 }
 
-                totalContent++;
-
-                if (content.IsResolved)
+                switch (content.Type)
                 {
-                    resolvedContent++;
+                    case TileContentType.Loot:
+                        counts.TotalLoot++;
+
+                        if (content.IsResolved)
+                        {
+                            counts.ResolvedLoot++;
+                        }
+                        break;
+
+                    case TileContentType.Enemy:
+                        counts.TotalEnemies++;
+
+                        if (content.IsResolved)
+                        {
+                            counts.ResolvedEnemies++;
+                        }
+                        break;
                 }
             }
         }
-
-        return $"Loot {resolvedContent}/{totalContent}";
     }
 
     private void HandleActivityStateChanged(ActivityState state)
     {
         Refresh();
+    }
+
+    private void RefreshStateRoots(ActivityState activityState)
+    {
+        SetRoot(hiddenRoot, activityState == ActivityState.Hidden);
+        SetRoot(lockedRoot, activityState == ActivityState.Locked);
+        SetRoot(unlockedRoot, activityState == ActivityState.Unlocked || activityState == ActivityState.Active);
+    }
+
+    private string GetStateMessage(ActivityState activityState)
+    {
+        switch (activityState)
+        {
+            case ActivityState.Hidden:
+                return hiddenMessage;
+
+            case ActivityState.Locked:
+                return lockedMessage;
+
+            case ActivityState.Unlocked:
+            case ActivityState.Active:
+                return string.Empty;
+
+            default:
+                return string.Empty;
+        }
     }
 
     private void SetCanvasGroup(CanvasGroup canvasGroup, float alpha, bool interactable)
@@ -262,5 +325,65 @@ public class PlanetMapDetailsView : MonoBehaviour, IPointerEnterHandler, IPointe
         canvasGroup.alpha = alpha;
         canvasGroup.interactable = interactable;
         canvasGroup.blocksRaycasts = interactable;
+    }
+
+    private void SetCanvasGroups(List<CanvasGroup> canvasGroups, float alpha, bool interactable)
+    {
+        for (int i = 0; i < canvasGroups.Count; i++)
+        {
+            SetCanvasGroup(canvasGroups[i], alpha, interactable);
+        }
+    }
+
+    private void FadeCanvasGroups(
+        List<CanvasGroup> canvasGroups,
+        float alpha,
+        bool interactable,
+        List<Tween> tweens)
+    {
+        for (int i = 0; i < canvasGroups.Count; i++)
+        {
+            CanvasGroup canvasGroup = canvasGroups[i];
+
+            if (canvasGroup == null)
+            {
+                continue;
+            }
+
+            canvasGroup.interactable = interactable;
+            canvasGroup.blocksRaycasts = interactable;
+            tweens.Add(canvasGroup
+                .DOFade(alpha, detailsFadeDuration)
+                .SetEase(detailsEase));
+        }
+    }
+
+    private void KillTweens(List<Tween> tweens)
+    {
+        for (int i = 0; i < tweens.Count; i++)
+        {
+            tweens[i]?.Kill();
+        }
+
+        tweens.Clear();
+    }
+
+    private void SetRoot(GameObject root, bool active)
+    {
+        if (root != null)
+        {
+            root.SetActive(active);
+        }
+    }
+
+    private struct PlanetContentCounts
+    {
+        public int TotalLoot;
+        public int ResolvedLoot;
+        public int TotalEnemies;
+        public int ResolvedEnemies;
+
+        public int LootLeft => TotalLoot - ResolvedLoot;
+        public int EnemiesLeft => TotalEnemies - ResolvedEnemies;
     }
 }

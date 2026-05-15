@@ -7,6 +7,8 @@ public class GameState : MonoBehaviour
 
     public List<string> UnlockedActivityIds = new List<string>();
     public List<ResourceType> DiscoveredResources = new List<ResourceType>();
+    public bool DronePurchasingUnlocked;
+    public bool DroneUpgradesUnlocked;
 
     public void UnlockPlanet(PlanetDefinition planet)
     {
@@ -33,7 +35,7 @@ public class GameState : MonoBehaviour
         return DiscoveredResources.Contains(resource);
     }
 
-    private void AddUnlockedActivity(string activityId)
+    public void AddUnlockedActivity(string activityId)
     {
         if (string.IsNullOrWhiteSpace(activityId) || UnlockedActivityIds.Contains(activityId))
         {
@@ -41,6 +43,28 @@ public class GameState : MonoBehaviour
         }
 
         UnlockedActivityIds.Add(activityId);
+        StateChanged?.Invoke();
+    }
+
+    public void UnlockDronePurchasing()
+    {
+        if (DronePurchasingUnlocked)
+        {
+            return;
+        }
+
+        DronePurchasingUnlocked = true;
+        StateChanged?.Invoke();
+    }
+
+    public void UnlockDroneUpgrades()
+    {
+        if (DroneUpgradesUnlocked)
+        {
+            return;
+        }
+
+        DroneUpgradesUnlocked = true;
         StateChanged?.Invoke();
     }
 
