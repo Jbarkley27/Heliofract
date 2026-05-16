@@ -58,9 +58,21 @@ public static class MiningStateFactory
             state.Tiles.Add(tile);
         }
 
+        CreateDroneSlots(state, config.MaxDroneSlots);
         ApplyForcedContents(state, config.ForcedContents);
 
         return state;
+    }
+
+    private static void CreateDroneSlots(PlanetMiningState state, int unlockedSlotCount)
+    {
+        const int maxVisibleDroneSlots = 5;
+        unlockedSlotCount = Mathf.Clamp(unlockedSlotCount, 0, maxVisibleDroneSlots);
+
+        for (int i = 0; i < maxVisibleDroneSlots; i++)
+        {
+            state.DroneSlots.Add(new PlanetDroneSlotState(i, i < unlockedSlotCount));
+        }
     }
 
     public static List<Vector2Int> GenerateMaskedGridCoordinates(

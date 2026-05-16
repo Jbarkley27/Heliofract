@@ -12,6 +12,7 @@ public class PlanetMiningState
     public int MinDepthLevel;
     public int MaxDepthLevel;
     public List<MiningTileState> Tiles = new List<MiningTileState>();
+    public List<PlanetDroneSlotState> DroneSlots = new List<PlanetDroneSlotState>();
     public MiningStats Stats = new MiningStats();
 
     public bool IsSurfaceComplete()

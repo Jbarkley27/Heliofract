@@ -66,6 +66,50 @@ public class ResourceInventory : MonoBehaviour
         }
     }
 
+    public bool HasCosts(IReadOnlyList<ResourceCost> costs)
+    {
+        if (costs == null || costs.Count == 0)
+        {
+            return true;
+        }
+
+        for (int i = 0; i < costs.Count; i++)
+        {
+            ResourceCost cost = costs[i];
+
+            if (GetAmount(cost.Type) < cost.Amount)
+            {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    public bool TrySpendCosts(IReadOnlyList<ResourceCost> costs)
+    {
+        if (!HasCosts(costs))
+        {
+            return false;
+        }
+
+        if (costs == null || costs.Count == 0)
+        {
+            return true;
+        }
+
+        List<ResourceAmount> spendAmounts = new List<ResourceAmount>();
+
+        for (int i = 0; i < costs.Count; i++)
+        {
+            ResourceCost cost = costs[i];
+            spendAmounts.Add(new ResourceAmount(cost.Type, -cost.Amount));
+        }
+
+        AddAmounts(spendAmounts);
+        return true;
+    }
+
     private void SetAmountInternal(ResourceType resourceType, double amount, bool notifyChanged)
     {
         amount = Math.Max(0, amount);

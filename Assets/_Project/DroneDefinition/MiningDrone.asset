@@ -1,0 +1,79 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 52ac3b2344b534fda8f082644420c8e5, type: 3}
+  m_Name: MiningDrone
+  m_EditorClassIdentifier: Assembly-CSharp::DroneDefinition
+  Id: mining_drone
+  DisplayName: Mining Drone
+  Icon: {fileID: 21300000, guid: f4e1f9f11c198482396cd77de90a834a, type: 3}
+  Description: Basic Mining Drone
+  Levels:
+  - Level: 1
+    DisplayName: Mining Drone
+    Icon: {fileID: 21300000, guid: f4e1f9f11c198482396cd77de90a834a, type: 3}
+    Rarity: 0
+    UpgradeType: 0
+    MiningRatePerSecond: 1
+    DamagePerHit: 1
+    ModuleSlotsUnlocked: 0
+    Costs:
+    - Type: 0
+      Amount: 100
+    - Type: 1
+      Amount: 100
+    UpgradeDescription: The most basic mining drone
+    TraitDescription: 
+  - Level: 2
+    DisplayName: Mining Drone Lv.2
+    Icon: {fileID: 21300000, guid: f4e1f9f11c198482396cd77de90a834a, type: 3}
+    Rarity: 0
+    UpgradeType: 0
+    MiningRatePerSecond: 0.9
+    DamagePerHit: 2
+    ModuleSlotsUnlocked: 0
+    Costs:
+    - Type: 0
+      Amount: 500
+    - Type: 1
+      Amount: 250
+    UpgradeDescription: Boost mining rate and damager per hit.
+    TraitDescription: 
+  - Level: 3
+    DisplayName: Mining Drone Lv.3
+    Icon: {fileID: 21300000, guid: f4e1f9f11c198482396cd77de90a834a, type: 3}
+    Rarity: 0
+    UpgradeType: 0
+    MiningRatePerSecond: 0.8
+    DamagePerHit: 4
+    ModuleSlotsUnlocked: 0
+    Costs:
+    - Type: 0
+      Amount: 1000
+    - Type: 1
+      Amount: 500
+    UpgradeDescription: Boost mining rate and damager per hit.
+    TraitDescription: 
+  - Level: 4
+    DisplayName: Mining Drone Lv.3
+    Icon: {fileID: 21300000, guid: 86e869a08a8e44bd384b2462a0fbfdaf, type: 3}
+    Rarity: 1
+    UpgradeType: 1
+    MiningRatePerSecond: 0.5
+    DamagePerHit: 10
+    ModuleSlotsUnlocked: 1
+    Costs:
+    - Type: 0
+      Amount: 3000
+    - Type: 1
+      Amount: 1500
+    UpgradeDescription: Evolve the basic mining drone to the next rarity level, uncommon.
+    TraitDescription: 

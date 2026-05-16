@@ -24,6 +24,9 @@ public class PlanetMiningConfig
 
     public List<PlanetAccessDefinition> AccessLevels = new List<PlanetAccessDefinition>();
 
+    [Header("Drones")]
+    [Range(0, 5)] public int MaxDroneSlots = 3;
+
     [Header("Planet Modifiers")]
     [Min(0)] public double HealthMultiplier = 1;
     [Min(0)] public double RewardMultiplier = 1;

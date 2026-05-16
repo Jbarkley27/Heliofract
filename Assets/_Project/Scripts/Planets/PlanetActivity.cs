@@ -2,6 +2,8 @@ using UnityEngine;
 
 public class PlanetActivity : Activity
 {
+    public event System.Action<PlanetMiningState> MiningStateChanged;
+
     public PlanetDefinition Definition;
 
     [Header("Mining")]
@@ -86,6 +88,7 @@ public class PlanetActivity : Activity
         }
 
         miningState = MiningStateFactory.CreateInitialState(Definition);
+        MiningStateChanged?.Invoke(miningState);
     }
 
     public void RefreshMiningGrid()
@@ -107,6 +110,7 @@ public class PlanetActivity : Activity
 
     private void HandleMiningStateChanged(PlanetMiningState changedState)
     {
+        MiningStateChanged?.Invoke(changedState);
         detailsView?.Refresh();
     }
 
